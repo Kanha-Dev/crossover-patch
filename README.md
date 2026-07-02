@@ -32,18 +32,16 @@ cd "$HOME/crossover-patch"
 bash patch.sh
 ```
 
-## Method 2: Patch a CrossOver app you already downloaded manually
+## Method 2: Assume CrossOver is already installed and patch it
 
-1. Place your CrossOver app bundle in your Downloads folder.
-2. Copy it into your home Applications folder:
+1. If CrossOver is already installed in `/Applications`, copy it to your home Applications folder:
 
 ```bash
 mkdir -p "$HOME/Applications"
-cd "$HOME/Downloads"
-cp -R "./CrossOver.app" "$HOME/Applications/CrossOver.app"
+cp -R "/Applications/CrossOver.app" "$HOME/Applications/CrossOver.app"
 ```
 
-3. Use the one-line curl command to download and run the patch script directly:
+2. Use the one-line curl command to download and run the patch script directly:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Kanha-Dev/crossover-patch/main/patch.sh -o /tmp/crossover-patch.sh && bash /tmp/crossover-patch.sh
