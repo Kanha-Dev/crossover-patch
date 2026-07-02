@@ -27,18 +27,27 @@ bash patch.sh /Applications/CrossOver.app
 
 ## Method 2: Assume CrossOver is already installed and patch it
 
-1. If CrossOver is already installed in `/Applications`, run the patch directly against that app:
+1. If CrossOver is already installed, run the patch directly against the app bundle path:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Kanha-Dev/crossover-patch/main/patch.sh -o /tmp/crossover-patch.sh && bash /tmp/crossover-patch.sh /Applications/CrossOver.app
 ```
 
-## Notes
-
-The script expects CrossOver.app to be available at:
+2. If CrossOver is installed in your user Applications folder instead, use:
 
 ```bash
-$HOME/Applications/CrossOver.app/Contents/MacOS
+curl -fsSL https://raw.githubusercontent.com/Kanha-Dev/crossover-patch/main/patch.sh -o /tmp/crossover-patch.sh && bash /tmp/crossover-patch.sh "$HOME/Applications/CrossOver.app"
 ```
+
+## Notes
+
+The script will automatically detect CrossOver at either:
+
+```bash
+/Applications/CrossOver.app
+$HOME/Applications/CrossOver.app
+```
+
+If the bundle is installed somewhere else, pass the exact app path as the first argument.
 
 This one-line curl method downloads the patch script and uses the patch source files from this repository automatically.

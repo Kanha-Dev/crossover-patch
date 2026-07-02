@@ -34,8 +34,13 @@ if [ ! -d "$CROSSOVER_MACOS_PATH" ]; then
     exit 1
 fi
 
+WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/crossover_patch.XXXXXX")"
+cleanup() {
+    rm -rf "$WORK_DIR"
+}
+trap cleanup EXIT
+
 echo "Patching app at $TARGET_APP_PATH"
-cd "$CROSSOVER_MACOS_PATH" || exit 1
 
 if [ ! -f "$WORKSPACE_PATCH_SCRIPT" ] || [ ! -f "$WORKSPACE_HOOK_SOURCE" ]; then
     echo "Patch assets were not found locally. Downloading them from GitHub..."
@@ -51,65 +56,44 @@ fi
 
 if [ -f "$WORKSPACE_PATCH_SCRIPT" ] && [ -f "$WORKSPACE_HOOK_SOURCE" ]; then
     echo "Using local workspace patch files"
-    rm -rf crossover_patch
-    mkdir -p crossover_patch
-    cp "$WORKSPACE_PATCH_SCRIPT" crossover_patch/pco.sh
-    cp "$WORKSPACE_HOOK_SOURCE" crossover_patch/hook.m
-    cd crossover_patch || exit 1
-    echo "building hook.dylib because this contains the logic"
-    if clang -dynamiclib -framework Foundation -framework AppKit -o hook.dylib hook.m; then
-        echo "Build successful."
-    else
-        echo "Build failed and no fallback patch binary is available locally."
-        exit 1
-    fi
+    cp "$WORKSPACE_PATCH_SCRIPT" "$WORK_DIR/pco.sh"
+    cp "$WORKSPACE_HOOK_SOURCE" "$WORK_DIR/hook.m"
 elif [ -d "$LOCAL_REPO_PATH/.git" ]; then
     echo "Using local patch source from $LOCAL_REPO_PATH"
-    rm -rf crossover_patch
-    mkdir -p crossover_patch
-    cp -R "$LOCAL_REPO_PATH"/. crossover_patch/
-    cd crossover_patch || exit 1
-    echo "building hook.dylib because this contains the logic"
-    if clang -dynamiclib -framework Foundation -framework AppKit -o hook.dylib hook.m; then
-        echo "Build successful."
-    else
-        echo "Build failed and no fallback patch binary is available locally."
-        exit 1
-    fi
-elif git clone "$REPO_URL" crossover_patch; then
-    cd crossover_patch || exit 1
-    echo "building hook.dylib because this contains the logic"
-    if clang -dynamiclib -framework Foundation -framework AppKit -o hook.dylib hook.m; then
-        echo "Build successful."
-    else
-        echo "Build failed and no fallback patch binary is available locally."
-        exit 1
-    fi
+    cp -R "$LOCAL_REPO_PATH"/. "$WORK_DIR/"
+elif git clone "$REPO_URL" "$WORK_DIR"; then
+    echo "Cloned patch source from $REPO_URL"
 else
     echo "No local patch source files were found and git is unavailable, so the patch cannot continue."
     exit 1
 fi
 
-# ok well if it doesnt exist, you've clearly done something wrong
-if [ ! -f hook.dylib ]; then
+cd "$WORK_DIR" || exit 1
+
+echo "building hook.dylib because this contains the logic"
+if clang -dynamiclib -framework Foundation -framework AppKit -o hook.dylib hook.m; then
+    echo "Build successful."
+else
+    echo "Build failed and no fallback patch binary is available locally."
+    exit 1
+fi
+
+if [ ! -f "$WORK_DIR/hook.dylib" ]; then
     echo "how the hell is hook.dylib not there?"
-    cd ..
-    rm -rf crossover_patch
     exit 1
 fi
 
 echo "signing it because macos is specal like that"
-codesign -f -s - hook.dylib
+codesign -f -s - "$WORK_DIR/hook.dylib"
 
-echo "blah blah moving it to where it belongs"
-mv hook.dylib ..
-mv ../CrossOver ../CrossOver.o
+echo "moving patch files into the CrossOver app bundle"
+cd "$CROSSOVER_MACOS_PATH" || exit 1
+mv CrossOver CrossOver.o
+cp "$WORK_DIR/pco.sh" CrossOver
+cp "$WORK_DIR/hook.dylib" .
+
 echo "gotta resign crossover as well because something about macos doing hardened runtime"
-codesign -f -s - ../CrossOver.o
-mv pco.sh ../CrossOver
-chmod +x ../CrossOver
-
-cd ..
-rm -rf crossover_patch
+codesign -f -s - CrossOver.o
+chmod +x CrossOver
 
 echo "uh sure try it out"
