@@ -14,25 +14,24 @@ if [ -z "$TARGET_APP_PATH" ]; then
 fi
 
 if [ ! -d "$TARGET_APP_PATH" ]; then
-    if [ "$TARGET_APP_PATH" = "/Applications/CrossOver.app" ] || [ "$TARGET_APP_PATH" = "$HOME/Applications/CrossOver.app" ]; then
-        echo "The specified CrossOver.app path does not exist: $TARGET_APP_PATH"
-        echo "Searching for installed CrossOver bundles under /Applications and $HOME/Applications..."
-        if [ -d "/Applications" ]; then
-            FOUND_APP="$(find /Applications -maxdepth 1 -type d -name 'CrossOver*.app' 2>/dev/null | sort | head -n 1)"
-        fi
-        if [ -z "$FOUND_APP" ] && [ -d "$HOME/Applications" ]; then
-            FOUND_APP="$(find "$HOME/Applications" -maxdepth 1 -type d -name 'CrossOver*.app' 2>/dev/null | sort | head -n 1)"
-        fi
-        if [ -n "$FOUND_APP" ]; then
-            echo "Detected CrossOver app at $FOUND_APP"
-            TARGET_APP_PATH="$FOUND_APP"
-        fi
+    echo "The specified CrossOver.app path does not exist: $TARGET_APP_PATH"
+    echo "Searching for installed CrossOver bundles under /Applications and $HOME/Applications..."
+    FOUND_APP=""
+    if [ -d "/Applications" ]; then
+        FOUND_APP="$(find /Applications -maxdepth 1 -type d -name 'CrossOver*.app' 2>/dev/null | sort | head -n 1)"
+    fi
+    if [ -z "$FOUND_APP" ] && [ -d "$HOME/Applications" ]; then
+        FOUND_APP="$(find "$HOME/Applications" -maxdepth 1 -type d -name 'CrossOver*.app' 2>/dev/null | sort | head -n 1)"
+    fi
+    if [ -n "$FOUND_APP" ]; then
+        echo "Detected CrossOver app at $FOUND_APP"
+        TARGET_APP_PATH="$FOUND_APP"
     fi
 fi
 
 if [ ! -d "$TARGET_APP_PATH" ]; then
     echo "The specified CrossOver.app path does not exist: $TARGET_APP_PATH"
-    echo "Use /Applications/CrossOver.app or $HOME/Applications/CrossOver.app."
+    echo "Use /Applications/CrossOver.app, $HOME/Applications/CrossOver.app, or the exact installed bundle path."
     exit 1
 fi
 
