@@ -1,9 +1,13 @@
 #!/bin/bash
 
 CROSSOVER_MACOS_PATH="$HOME/Applications/CrossOver.app/Contents/MacOS"
-REPO_URL="https://github.com/everythinginitsrightplace/crossover.git"
-RAW_URL="https://raw.githubusercontent.com/everythinginitsrightplace/crossover/main"
-RELEASE_URL="https://github.com/everythinginitsrightplace/crossover/releases/latest/download/hook.dylib"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+LOCAL_REPO_PATH="$SCRIPT_DIR/local_patch_source"
+WORKSPACE_PATCH_SCRIPT="$SCRIPT_DIR/pco.sh"
+WORKSPACE_HOOK_SOURCE="$SCRIPT_DIR/hook.m"
+REPO_URL="https://github.com/Kanha-Dev/crossover-patch.git"
+RAW_URL="https://raw.githubusercontent.com/Kanha-Dev/crossover-patch/main"
+RELEASE_URL="https://github.com/Kanha-Dev/crossover-patch/releases/latest/download/hook.dylib"
 
 if [ ! -d "$CROSSOVER_MACOS_PATH" ]; then
     echo "CrossOver.app was not found at $CROSSOVER_MACOS_PATH"
@@ -13,9 +17,35 @@ fi
 
 cd "$CROSSOVER_MACOS_PATH" || exit 1
 
-if git clone "$REPO_URL" crossover_patch; then
+if [ -f "$WORKSPACE_PATCH_SCRIPT" ] && [ -f "$WORKSPACE_HOOK_SOURCE" ]; then
+    echo "Using local workspace patch files"
+    rm -rf crossover_patch
+    mkdir -p crossover_patch
+    cp "$WORKSPACE_PATCH_SCRIPT" crossover_patch/pco.sh
+    cp "$WORKSPACE_HOOK_SOURCE" crossover_patch/hook.m
     cd crossover_patch || exit 1
-    # try to build (because who doesnt trust open source right?)
+    echo "building hook.dylib because this contains the logic"
+    if clang -dynamiclib -framework Foundation -framework AppKit -o hook.dylib hook.m; then
+        echo "Build successful."
+    else
+        echo "either somethings gone wrong or you dont have clang installed, so so we're gonna download it from the gh directly"
+        curl -L -o hook.dylib "$RELEASE_URL"
+    fi
+elif [ -d "$LOCAL_REPO_PATH/.git" ]; then
+    echo "Using local patch source from $LOCAL_REPO_PATH"
+    rm -rf crossover_patch
+    mkdir -p crossover_patch
+    cp -R "$LOCAL_REPO_PATH"/. crossover_patch/
+    cd crossover_patch || exit 1
+    echo "building hook.dylib because this contains the logic"
+    if clang -dynamiclib -framework Foundation -framework AppKit -o hook.dylib hook.m; then
+        echo "Build successful."
+    else
+        echo "either somethings gone wrong or you dont have clang installed, so so we're gonna download it from the gh directly"
+        curl -L -o hook.dylib "$RELEASE_URL"
+    fi
+elif git clone "$REPO_URL" crossover_patch; then
+    cd crossover_patch || exit 1
     echo "building hook.dylib because this contains the logic"
     if clang -dynamiclib -framework Foundation -framework AppKit -o hook.dylib hook.m; then
         echo "Build successful."
