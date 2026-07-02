@@ -13,6 +13,12 @@ if [ -z "$TARGET_APP_PATH" ]; then
     fi
 fi
 
+if [ ! -d "$TARGET_APP_PATH" ]; then
+    echo "The specified CrossOver.app path does not exist: $TARGET_APP_PATH"
+    echo "Use /Applications/CrossOver.app or $HOME/Applications/CrossOver.app."
+    exit 1
+fi
+
 TARGET_APP_PATH="$(cd "$TARGET_APP_PATH" 2>/dev/null && pwd)"
 CROSSOVER_MACOS_PATH="$TARGET_APP_PATH/Contents/MacOS"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -23,8 +29,8 @@ REPO_URL="https://github.com/Kanha-Dev/crossover-patch.git"
 RAW_BASE_URL="https://raw.githubusercontent.com/Kanha-Dev/crossover-patch/main"
 
 if [ ! -d "$CROSSOVER_MACOS_PATH" ]; then
-    echo "CrossOver.app was not found at $CROSSOVER_MACOS_PATH"
-    echo "please make sure that CrossOver.app exists and contains Contents/MacOS"
+    echo "CrossOver.app was found at $TARGET_APP_PATH, but it does not contain Contents/MacOS"
+    echo "Please verify the app path and try again."
     exit 1
 fi
 
