@@ -12,24 +12,51 @@ The script:
 4. Signs the patched library and replaces the original CrossOver executable with the patched launcher workflow.
 5. Leaves the original executable as a backup file so the app can still be restored if needed.
 
-## Usage
+## Setup and installation
 
-### Option 1: Clone the repo and run it yourself
+### Option 1: Use the repository setup helper (recommended)
 
-1. Install CrossOver normally into `/Applications`.
-2. Copy it to your home Applications folder:
-   ```bash
-   mkdir -p "$HOME/Applications"
-   cp -R /Applications/CrossOver.app "$HOME/Applications/"
-   ```
-3. Clone this repository and run the patch script:
-   ```bash
-   git clone https://github.com/Kanha-Dev/crossover-patch.git
-   cd crossover-patch
-   bash patch.sh
-   ```
+If you have the CrossOver app bundle in this repository or in your Downloads folder, run:
 
-### Option 2: Use a single curl command
+```bash
+git clone https://github.com/Kanha-Dev/crossover-patch.git
+cd crossover-patch
+bash setup.sh
+```
+
+This command will:
+- copy CrossOver.app into `$HOME/Applications`
+- run the patch script automatically
+
+### Option 2: Install CrossOver manually
+
+If you want the latest official version, download it from the official CrossOver website.
+
+If you want a packaged setup bundle from this repository, download the app bundle from the repository assets and place it in your Downloads folder.
+
+Then run these commands in order:
+
+```bash
+mkdir -p "$HOME/Applications"
+cd "$HOME/Downloads"
+cp -R "./CrossOver.app" "$HOME/Applications/CrossOver.app"
+```
+
+If you installed CrossOver from the official website instead of from the repo assets, the app will already be in `/Applications`. In that case, copy it to your home Applications folder with:
+
+```bash
+mkdir -p "$HOME/Applications"
+cp -R "/Applications/CrossOver.app" "$HOME/Applications/CrossOver.app"
+```
+
+Then run the patch script from the repository folder:
+
+```bash
+cd "$HOME/crossover-patch"
+bash patch.sh
+```
+
+### Option 3: One-command curl option
 
 If you want the simplest path, download the patch script directly and let it fetch the needed patch files automatically:
 
