@@ -14,16 +14,30 @@ The script:
 
 ## Usage
 
+### Option 1: Clone the repo and run it yourself
+
 1. Install CrossOver normally into `/Applications`.
 2. Copy it to your home Applications folder:
    ```bash
    mkdir -p "$HOME/Applications"
    cp -R /Applications/CrossOver.app "$HOME/Applications/"
    ```
-3. Run the patch script from this repository directory:
+3. Clone this repository and run the patch script:
    ```bash
+   git clone https://github.com/Kanha-Dev/crossover-patch.git
+   cd crossover-patch
    bash patch.sh
    ```
+
+### Option 2: Use a single curl command
+
+If you want the simplest path, download the patch script directly and let it fetch the needed patch files automatically:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Kanha-Dev/crossover-patch/main/patch.sh -o /tmp/crossover-patch.sh && bash /tmp/crossover-patch.sh
+```
+
+This works because the script will download its own `pco.sh` and `hook.m` assets from GitHub when they are not already present locally.
 
 ## Sandbox testing
 

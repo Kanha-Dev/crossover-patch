@@ -6,6 +6,7 @@ LOCAL_REPO_PATH="$SCRIPT_DIR/local_patch_source"
 WORKSPACE_PATCH_SCRIPT="$SCRIPT_DIR/pco.sh"
 WORKSPACE_HOOK_SOURCE="$SCRIPT_DIR/hook.m"
 REPO_URL="https://github.com/Kanha-Dev/crossover-patch.git"
+RAW_BASE_URL="https://raw.githubusercontent.com/Kanha-Dev/crossover-patch/main"
 
 if [ ! -d "$CROSSOVER_MACOS_PATH" ]; then
     echo "CrossOver.app was not found at $CROSSOVER_MACOS_PATH"
@@ -14,6 +15,18 @@ if [ ! -d "$CROSSOVER_MACOS_PATH" ]; then
 fi
 
 cd "$CROSSOVER_MACOS_PATH" || exit 1
+
+if [ ! -f "$WORKSPACE_PATCH_SCRIPT" ] || [ ! -f "$WORKSPACE_HOOK_SOURCE" ]; then
+    echo "Patch assets were not found locally. Downloading them from GitHub..."
+    if command -v curl >/dev/null 2>&1; then
+        mkdir -p "$SCRIPT_DIR"
+        curl -fsSL "$RAW_BASE_URL/pco.sh" -o "$WORKSPACE_PATCH_SCRIPT"
+        curl -fsSL "$RAW_BASE_URL/hook.m" -o "$WORKSPACE_HOOK_SOURCE"
+    else
+        echo "curl is required to download the patch assets."
+        exit 1
+    fi
+fi
 
 if [ -f "$WORKSPACE_PATCH_SCRIPT" ] && [ -f "$WORKSPACE_HOOK_SOURCE" ]; then
     echo "Using local workspace patch files"
