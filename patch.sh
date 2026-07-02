@@ -88,7 +88,19 @@ codesign -f -s - "$WORK_DIR/hook.dylib"
 
 echo "moving patch files into the CrossOver app bundle"
 cd "$CROSSOVER_MACOS_PATH" || exit 1
-mv CrossOver CrossOver.o
+if [ -f CrossOver ]; then
+    chflags nouchg CrossOver 2>/dev/null || true
+    chmod u+w CrossOver 2>/dev/null || true
+    if ! mv CrossOver CrossOver.o; then
+        echo "Failed to rename CrossOver executable."
+        echo "This is often caused by macOS protecting the app bundle or file flags."
+        echo "Try removing immutability flags and rerun with sudo, or patch a copy of CrossOver outside /Applications."
+        exit 1
+    fi
+else
+    echo "CrossOver executable not found in $CROSSOVER_MACOS_PATH"
+    exit 1
+fi
 cp "$WORK_DIR/pco.sh" CrossOver
 cp "$WORK_DIR/hook.dylib" .
 
