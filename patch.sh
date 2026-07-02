@@ -7,7 +7,7 @@ RELEASE_URL="https://github.com/everythinginitsrightplace/crossover/releases/lat
 
 if [ ! -d "$CROSSOVER_MACOS_PATH" ]; then
     echo "CrossOver.app was not found at $CROSSOVER_MACOS_PATH"
-    echo "please make sure that CrossOver.app is in /Applications/"
+    echo "please make sure that CrossOver.app is copied to $HOME/Applications/"
     exit 1
 fi
 

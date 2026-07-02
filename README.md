@@ -10,7 +10,7 @@ This repository contains a patch script for applying a local CrossOver macOS pat
    mkdir -p "$HOME/Applications"
    cp -R /Applications/CrossOver.app "$HOME/Applications/"
    ```
-3. Run the patch script:
+3. Run the patch script from the repo directory:
    ```bash
    bash patch.sh
    ```
