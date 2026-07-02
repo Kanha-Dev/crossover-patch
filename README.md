@@ -13,9 +13,26 @@ The patch flow works like this:
 5. It replaces the original CrossOver executable with the patched launcher workflow.
 6. It leaves the original executable renamed as a backup file so you can compare or restore it if needed.
 
-## Method 1: Patch a CrossOver app copied from your Downloads folder
+## Method 1: Download CrossOver from the official website and patch it
 
-1. Download CrossOver and place the app bundle in your Downloads folder.
+1. Download the latest CrossOver build from the official CrossOver website.
+2. Install it into `/Applications`.
+3. Copy it to your home Applications folder:
+
+```bash
+mkdir -p "$HOME/Applications"
+cp -R "/Applications/CrossOver.app" "$HOME/Applications/CrossOver.app"
+```
+
+4. Download this patch script directly and run it:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Kanha-Dev/crossover-patch/main/patch.sh -o /tmp/crossover-patch.sh && bash /tmp/crossover-patch.sh
+```
+
+## Method 2: Patch a CrossOver app you already downloaded manually
+
+1. Place your CrossOver app bundle in your Downloads folder.
 2. Copy it into your home Applications folder:
 
 ```bash
@@ -24,30 +41,10 @@ cd "$HOME/Downloads"
 cp -R "./CrossOver.app" "$HOME/Applications/CrossOver.app"
 ```
 
-3. Clone this repository and run the patch script:
+3. Download this patch script directly and run it:
 
 ```bash
-git clone https://github.com/Kanha-Dev/crossover-patch.git
-cd "$HOME/crossover-patch"
-bash patch.sh
-```
-
-## Method 2: Patch the official CrossOver install from /Applications
-
-1. Install CrossOver normally into `/Applications`.
-2. Copy it to your home Applications folder:
-
-```bash
-mkdir -p "$HOME/Applications"
-cp -R "/Applications/CrossOver.app" "$HOME/Applications/CrossOver.app"
-```
-
-3. Clone this repository and run the patch script:
-
-```bash
-git clone https://github.com/Kanha-Dev/crossover-patch.git
-cd "$HOME/crossover-patch"
-bash patch.sh
+curl -fsSL https://raw.githubusercontent.com/Kanha-Dev/crossover-patch/main/patch.sh -o /tmp/crossover-patch.sh && bash /tmp/crossover-patch.sh
 ```
 
 ## Notes
@@ -58,14 +55,4 @@ The script expects CrossOver.app to be available at:
 $HOME/Applications/CrossOver.app/Contents/MacOS
 ```
 
-If the patch source files are missing locally, the script will try to use the repository version from this folder.
-
-## Notes
-
-The script expects CrossOver.app to be available at:
-
-```bash
-$HOME/Applications/CrossOver.app/Contents/MacOS
-```
-
-If the local patch files are not present, it falls back to a GitHub-based remote source, but the preferred workflow is to use the files in this repository.
+This one-line curl method downloads the patch script and uses the patch source files from this repository automatically.
