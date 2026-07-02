@@ -24,10 +24,12 @@ mkdir -p "$HOME/Applications"
 cp -R "/Applications/CrossOver.app" "$HOME/Applications/CrossOver.app"
 ```
 
-4. Download this patch script directly and run it:
+4. Clone this repository and run the patch script manually:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Kanha-Dev/crossover-patch/main/patch.sh -o /tmp/crossover-patch.sh && bash /tmp/crossover-patch.sh
+git clone https://github.com/Kanha-Dev/crossover-patch.git
+cd "$HOME/crossover-patch"
+bash patch.sh
 ```
 
 ## Method 2: Patch a CrossOver app you already downloaded manually
@@ -41,7 +43,7 @@ cd "$HOME/Downloads"
 cp -R "./CrossOver.app" "$HOME/Applications/CrossOver.app"
 ```
 
-3. Download this patch script directly and run it:
+3. Use the one-line curl command to download and run the patch script directly:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Kanha-Dev/crossover-patch/main/patch.sh -o /tmp/crossover-patch.sh && bash /tmp/crossover-patch.sh
