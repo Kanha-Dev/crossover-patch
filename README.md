@@ -14,27 +14,11 @@ The script:
 
 ## Setup and installation
 
-### Option 1: Use the repository setup helper (recommended)
+### Method 1: Download the setup from GitHub Releases / assets
 
-If you have the CrossOver app bundle in this repository or in your Downloads folder, run:
-
-```bash
-git clone https://github.com/Kanha-Dev/crossover-patch.git
-cd crossover-patch
-bash setup.sh
-```
-
-This command will:
-- copy CrossOver.app into `$HOME/Applications`
-- run the patch script automatically
-
-### Option 2: Install CrossOver manually
-
-If you want the latest official version, download it from the official CrossOver website.
-
-If you want a packaged setup bundle from this repository, download the app bundle from the repository assets and place it in your Downloads folder.
-
-Then run these commands in order:
+1. Download the CrossOver setup bundle from the GitHub releases or assets for this repository.
+2. Place the downloaded bundle in your Downloads folder.
+3. Run these commands in order:
 
 ```bash
 mkdir -p "$HOME/Applications"
@@ -42,43 +26,40 @@ cd "$HOME/Downloads"
 cp -R "./CrossOver.app" "$HOME/Applications/CrossOver.app"
 ```
 
-If you installed CrossOver from the official website instead of from the repo assets, the app will already be in `/Applications`. In that case, copy it to your home Applications folder with:
+4. Patch it:
+
+```bash
+git clone https://github.com/Kanha-Dev/crossover-patch.git
+cd "$HOME/crossover-patch"
+bash patch.sh
+```
+
+### Method 2: Download the latest official CrossOver build
+
+1. Download the latest CrossOver version from the official CrossOver website.
+2. Install it into `/Applications`.
+3. Copy it to your home Applications folder with:
 
 ```bash
 mkdir -p "$HOME/Applications"
 cp -R "/Applications/CrossOver.app" "$HOME/Applications/CrossOver.app"
 ```
 
-Then run the patch script from the repository folder:
+4. Patch it:
 
 ```bash
+git clone https://github.com/Kanha-Dev/crossover-patch.git
 cd "$HOME/crossover-patch"
 bash patch.sh
 ```
 
-### Option 3: One-command curl option
+### One-command curl option
 
 If you want the simplest path, download the patch script directly and let it fetch the needed patch files automatically:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Kanha-Dev/crossover-patch/main/patch.sh -o /tmp/crossover-patch.sh && bash /tmp/crossover-patch.sh
 ```
-
-This works because the script will download its own `pco.sh` and `hook.m` assets from GitHub when they are not already present locally.
-
-## Sandbox testing
-
-For safe end-to-end testing, use a copied version of CrossOver instead of your main install:
-
-```bash
-rm -rf "$HOME/Applications/CrossOver.app"
-mkdir -p "$HOME/Applications"
-cp -R /Applications/CrossOver.app "$HOME/Applications/CrossOver.app"
-bash patch.sh
-open "$HOME/Applications/CrossOver.app"
-```
-
-This lets you test the patch flow without altering your primary installation.
 
 ## Notes
 
