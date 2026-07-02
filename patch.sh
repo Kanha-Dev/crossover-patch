@@ -1,6 +1,20 @@
 #!/bin/bash
 
-CROSSOVER_MACOS_PATH="$HOME/Applications/CrossOver.app/Contents/MacOS"
+TARGET_APP_PATH="${1:-}"
+if [ -z "$TARGET_APP_PATH" ]; then
+    if [ -d "/Applications/CrossOver.app/Contents/MacOS" ]; then
+        TARGET_APP_PATH="/Applications/CrossOver.app"
+    elif [ -d "$HOME/Applications/CrossOver.app/Contents/MacOS" ]; then
+        TARGET_APP_PATH="$HOME/Applications/CrossOver.app"
+    else
+        echo "CrossOver.app was not found."
+        echo "Pass the app path as an argument, or install/copy CrossOver to /Applications or $HOME/Applications/."
+        exit 1
+    fi
+fi
+
+TARGET_APP_PATH="$(cd "$TARGET_APP_PATH" 2>/dev/null && pwd)"
+CROSSOVER_MACOS_PATH="$TARGET_APP_PATH/Contents/MacOS"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 LOCAL_REPO_PATH="$SCRIPT_DIR/local_patch_source"
 WORKSPACE_PATCH_SCRIPT="$SCRIPT_DIR/pco.sh"
@@ -10,10 +24,11 @@ RAW_BASE_URL="https://raw.githubusercontent.com/Kanha-Dev/crossover-patch/main"
 
 if [ ! -d "$CROSSOVER_MACOS_PATH" ]; then
     echo "CrossOver.app was not found at $CROSSOVER_MACOS_PATH"
-    echo "please make sure that CrossOver.app is copied to $HOME/Applications/"
+    echo "please make sure that CrossOver.app exists and contains Contents/MacOS"
     exit 1
 fi
 
+echo "Patching app at $TARGET_APP_PATH"
 cd "$CROSSOVER_MACOS_PATH" || exit 1
 
 if [ ! -f "$WORKSPACE_PATCH_SCRIPT" ] || [ ! -f "$WORKSPACE_HOOK_SOURCE" ]; then

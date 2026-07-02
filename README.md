@@ -17,34 +17,20 @@ The patch flow works like this:
 
 1. Download the latest CrossOver build from the official CrossOver website.
 2. Install it into `/Applications`.
-3. Copy it to your home Applications folder:
-
-```bash
-mkdir -p "$HOME/Applications"
-cp -R "/Applications/CrossOver.app" "$HOME/Applications/CrossOver.app"
-```
-
-4. Clone this repository and run the patch script manually:
+3. Clone this repository and run the patch script directly against the installed app:
 
 ```bash
 git clone https://github.com/Kanha-Dev/crossover-patch.git
 cd "$HOME/crossover-patch"
-bash patch.sh
+bash patch.sh /Applications/CrossOver.app
 ```
 
 ## Method 2: Assume CrossOver is already installed and patch it
 
-1. If CrossOver is already installed in `/Applications`, copy it to your home Applications folder:
+1. If CrossOver is already installed in `/Applications`, run the patch directly against that app:
 
 ```bash
-mkdir -p "$HOME/Applications"
-cp -R "/Applications/CrossOver.app" "$HOME/Applications/CrossOver.app"
-```
-
-2. Use the one-line curl command to download and run the patch script directly:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/Kanha-Dev/crossover-patch/main/patch.sh -o /tmp/crossover-patch.sh && bash /tmp/crossover-patch.sh
+curl -fsSL https://raw.githubusercontent.com/Kanha-Dev/crossover-patch/main/patch.sh -o /tmp/crossover-patch.sh && bash /tmp/crossover-patch.sh /Applications/CrossOver.app
 ```
 
 ## Notes
